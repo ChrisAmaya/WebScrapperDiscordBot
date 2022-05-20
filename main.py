@@ -6,6 +6,7 @@
 
 # ------------------------------------Imports-------------------------------------
 import discord
+# from selenium import webdriver
 import UniversityScrapper
 
 # --------------------------------Instatiatations---------------------------------
@@ -37,6 +38,12 @@ async def on_message(message):
         
     if f'$search' in message_content:
         
+        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
+        # driver.get('https://news.usask.ca/index.php')
+        # for i in range(10):
+        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
+        #     print(i)
+        
         search_words = university_news.search_words(message_content)
         result_links = university_news.search()
         links = university_news.send_link(result_links, search_words)
@@ -52,5 +59,5 @@ async def on_message(message):
         else:
             await message.channel.send(no_result_message)
     
-# Retrieve Token
+# ----------------------------------Retrieve Token------------------------------------
 client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")
