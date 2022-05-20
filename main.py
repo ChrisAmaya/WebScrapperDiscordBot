@@ -33,17 +33,10 @@ async def on_message(message):
     message_content = message.content.lower()  
     print(f'The message is: {message_content}')
     
-    if message.content.startswith(f'$hello'):
+    if message.content.startswith(f'$Insult Me'):
         await message.channel.send('''Fuck you.''')
         
     if f'$search' in message_content:
-        
-        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
-        # driver.get('https://news.usask.ca/index.php')
-        # for i in range(10):
-        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
-        #     print(i)
-        
         search_words = university_news.search_words(message_content)
         result_links = university_news.search()
         links = university_news.send_link(result_links, search_words)
@@ -51,6 +44,7 @@ async def on_message(message):
         counter = 0
         if len(links) > 0:
             for link in links:
+                # Limits message to avoid spam
                 if (counter >= 10):
                     break
                 else:

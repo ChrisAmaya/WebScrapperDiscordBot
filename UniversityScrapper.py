@@ -1,5 +1,3 @@
-
-import requests
 import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -9,23 +7,14 @@ class UniversityNews:
         self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}
         self.url = 'https://news.usask.ca/index.php'
         
-        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
-        # driver.get(self.url)
-        # for i in range(10):
-        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
-        #     print(i)
-            
-    # Create search words and url keywords part
+    # Create search words part
     def search_words(self, user_message):
         words = user_message.split()[1:]
         search_words = ' '.join(words)
         return search_words
     
+    # Search on expanded webpage
     def search(self):
-        
-        # create requests and get the response
-        response = requests.get(self.url)
-        
         driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
         driver.get(self.url)
         for i in range(10):
@@ -33,28 +22,15 @@ class UniversityNews:
             time.sleep(0.5)
             print(i)
         
-        content = response.content
-        
-        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
-        # driver.get('https://news.usask.ca/index.php')
-        # for i in range(10):
-        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
-        #     print(i)
-        
         # parse the html and pull the data we want
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        
-        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
-        # driver.get('https://news.usask.ca/index.php')
-        # for i in range(10):
-        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
-        #     print(i)
         
         result_links = soup.find_all("a")
         for i in result_links:
             print(i)
         return result_links
     
+    # Send Link to server
     def send_link(self, result_links, search_words):
         send_link = set()
         for link in result_links:
