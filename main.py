@@ -6,7 +6,6 @@
 
 # ------------------------------------Imports-------------------------------------
 import discord
-# from selenium import webdriver
 import UniversityScrapper
 
 # --------------------------------Instatiatations---------------------------------
@@ -29,7 +28,7 @@ async def on_message(message):
     # make sure bot doesnt respond to its own message to avoid infinite loop
     if message.author == client.user:
         return
-      # lower case message
+    
     message_content = message.content.lower()  
     print(f'The message is: {message_content}')
     
@@ -53,5 +52,17 @@ async def on_message(message):
         else:
             await message.channel.send(no_result_message)
     
+    if f'$random' in message_content:
+        result_links = university_news.search()
+        temp = set()
+        link = university_news.random_link(result_links)
+        temp.add(link)
+        print(f"\nlink: {temp}\n")
+        
+        if len(temp) == 1:
+            for link in temp:
+                await message.channel.send(link)    
+        else:
+            await message.channel.send(no_result_message)
 # ----------------------------------Retrieve Token------------------------------------
 client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")
