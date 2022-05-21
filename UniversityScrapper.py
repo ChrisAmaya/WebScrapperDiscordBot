@@ -82,7 +82,11 @@ class UniversityNews:
             text = link.text.lower()
             print(f"Send_link: {text}")
             if search_words in text:
-                send_link.add("https://news.usask.ca/"+str(link.get('href')))
+                # text_temp = link.lower()
+                if ("http" in str(link)):
+                    send_link.add(str(link.get('href')))
+                else:
+                    send_link.add("https://news.usask.ca/"+str(link.get('href')))
         return send_link
     
     # send one random link 
@@ -98,8 +102,12 @@ class UniversityNews:
                 print(i)
                 print()
                 counter += 1
+                if ("http" in str(i)):
+                    all_links.append(str(i.get('href')))
+                else:
+                    all_links.append("https://news.usask.ca/"+str(i.get('href')))
                 # all_links.append("https://news.usask.ca/"+str(i.get('href')))
-                all_links.append(str(i.get('href')))
+                # all_links.append(str(i.get('href')))
         print('\n----------------------------------------------------------\n')
         
         randNum = random.randint(1,counter)
@@ -123,7 +131,10 @@ class UniversityNews:
                 print(i)
                 print()
                 counter += 1
-                all_links.append("https://news.usask.ca/"+str(i.get('href')))
+                if ("http" in str(i)):
+                    all_links.append(str(i.get('href')))
+                else:
+                    all_links.append("https://news.usask.ca/"+str(i.get('href')))
                 # all_links.append(str(i.get('href')))
         print('\n----------------------------------------------------------\n')
         
