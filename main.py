@@ -64,5 +64,22 @@ async def on_message(message):
                 await message.channel.send(link)    
         else:
             await message.channel.send(no_result_message)
+            
+    if f'$most recent' in message_content:
+        result_links = university_news.search()
+        links = university_news.most_recent(result_links)
+        
+        print(f"\nMost Recent Links: {links}\n")
+        
+        if (len(links) > 0):
+            for link in links:
+                await message.channel.send(link)
+        else:
+            await message.channel.send(no_result_message)
+            
+    if f'$featured' in message_content:
+        result_links = university_news.searchFeatured()
+        # links = university_news.send_link(result_links)
+        
 # ----------------------------------Retrieve Token------------------------------------
 client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")

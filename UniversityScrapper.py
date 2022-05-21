@@ -1,4 +1,5 @@
 import time
+import requests
 import random
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -32,6 +33,35 @@ class UniversityNews:
             print(i)
             
         print('\n########################################################\n')
+        return result_links
+    
+    # Search on expanded webpage
+    def searchFeatured(self):
+        response = requests.get(self.url)
+        content = response.content
+        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
+        # driver.get(self.url)
+        # for i in range(10):
+        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
+        #     time.sleep(0.5)
+        #     print(i)
+        
+        # parse the html and pull the data we want
+        print('\n/////////////////////////////////////////////////////////\n')
+        soup = BeautifulSoup(content, 'html.parser')
+        
+        # divTag = soup.find_all("div", {"class" : "uofs-article-section"})
+        # for tag in divTag:
+        #     for element in tag.find_all("p"):
+        #         pData = element.text
+        #         print(pData)
+        
+        result_links = soup.find_all("a", class_="uofs-article-section")
+        print(result_links)
+        for i in result_links:
+            print(i)
+            
+        print('\n/////////////////////////////////////////////////////////\n')
         return result_links
     
     # Send Link to server
@@ -79,4 +109,32 @@ class UniversityNews:
         final_link.add(temp)
         
         return temp
+    
+    # Send the most recent links (x3)
+    def most_recent(self, result_links):
+        all_links = list()
+        final_links = set()
+        print('\n----------------------------------------------------------\n')
+        counter = 1
+        for i in result_links:
+            if '<a href=' and '/articles/' in str(i):
+                print()
+                print(counter)
+                print(i)
+                print()
+                counter += 1
+                all_links.append("https://news.usask.ca/"+str(i.get('href')))
+                # all_links.append(str(i.get('href')))
+        print('\n----------------------------------------------------------\n')
+        
+        print(all_links[0:6])
+        print('\n==============================================\n')
+        ii=1
+        while ii < 6:
+            print(all_links[ii])
+            final_links.add(all_links[ii])
+            ii+=2
+        print('\n==============================================\n')
+        
+        return final_links
         
