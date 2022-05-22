@@ -19,20 +19,16 @@ class UniversityNews:
     def search(self):
         driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
         driver.get(self.url)
+        
+        # Need to expand the webpage in order to scrap all articles
         for i in range(10):
             driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
             time.sleep(0.5)
-            print(i)
         
         # parse the html and pull the data we want
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        print('\n########################################################\n')
-        
         result_links = soup.find_all('a', href=True)
-        for i in result_links:
-            print(i)
-            
-        print('\n########################################################\n')
+
         return result_links
     
     # Search on expanded webpage
@@ -67,85 +63,57 @@ class UniversityNews:
     # Send Link to server
     def send_link(self, result_links, search_words):
         send_link = set()
-        # print('\n----------------------------------------------------------\n')
-        # counter = 1
-        # for i in result_links:
-        #     if '<a href=' and '/articles/' in str(i):
-        #         print()
-        #         print(counter)
-        #         print(i)
-        #         print()
-        #         counter += 1
-        # print('\n----------------------------------------------------------\n')
         
         for link in result_links:
             text = link.text.lower()
-            print(f"Send_link: {text}")
             if search_words in text:
-                # text_temp = link.lower()
+                # Some links return without the "https://... some with, condition statement to deal with it"
                 if ("http" in str(link)):
                     send_link.add(str(link.get('href')))
                 else:
                     send_link.add("https://news.usask.ca/"+str(link.get('href')))
+        
         return send_link
     
     # send one random link 
     def random_link(self, result_links):
         all_links = list()
-        final_link = set()
-        print('\n----------------------------------------------------------\n')
+        # final_link = set()
+        
+        # Need to count how many articles total to generate a random number later
         counter = 1
         for i in result_links:
             if '<a href=' and '/articles/' in str(i):
-                print()
-                print(counter)
-                print(i)
-                print()
                 counter += 1
+                # Some links return without the "https://... some with, condition statement to deal with it"
                 if ("http" in str(i)):
                     all_links.append(str(i.get('href')))
                 else:
                     all_links.append("https://news.usask.ca/"+str(i.get('href')))
-                # all_links.append("https://news.usask.ca/"+str(i.get('href')))
-                # all_links.append(str(i.get('href')))
-        print('\n----------------------------------------------------------\n')
         
+        # Generate random link
         randNum = random.randint(1,counter)
-        print(randNum)
-        print(all_links[randNum])
-        temp = all_links[randNum]
-        final_link.add(temp)
         
-        return temp
+        return all_links[randNum]
     
     # Send the most recent links (x3)
     def most_recent(self, result_links):
         all_links = list()
         final_links = set()
-        print('\n----------------------------------------------------------\n')
-        counter = 1
+
         for i in result_links:
             if '<a href=' and '/articles/' in str(i):
-                print()
-                print(counter)
-                print(i)
-                print()
-                counter += 1
+                # Some links return without the "https://... some with, condition statement to deal with it"
                 if ("http" in str(i)):
                     all_links.append(str(i.get('href')))
                 else:
                     all_links.append("https://news.usask.ca/"+str(i.get('href')))
-                # all_links.append(str(i.get('href')))
-        print('\n----------------------------------------------------------\n')
         
-        print(all_links[0:6])
-        print('\n==============================================\n')
+        # Website has repeats are the beginning and some other links that werent filtered out
         ii=1
         while ii < 6:
-            print(all_links[ii])
             final_links.add(all_links[ii])
             ii+=2
-        print('\n==============================================\n')
         
         return final_links
         
