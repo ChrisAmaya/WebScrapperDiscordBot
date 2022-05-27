@@ -4,16 +4,16 @@
 # and post in chat periodically and on demand
 
 # ------------------------------------Imports-------------------------------------
-from re import L
 import discord
 import UniversityScrapper
 
 # --------------------------------Instatiatations---------------------------------
 client = discord.Client()
 university_news = UniversityScrapper.UniversityNews()
+college_news = UniversityScrapper.CollegeNews()
 
 # --------------------------------Global Variables--------------------------------
-no_result_message = '''Nada, sorry'''
+no_result_message = '''There does not seem to be any results, sorry'''
 
 # ---------------------------------Discord Events---------------------------------
 
@@ -131,6 +131,29 @@ async def on_message(message):
                 for link in links:
                     await message.channel.send('----------------------')
                     await message.channel.send(link)
+        else:
+            await message.channel.send(no_result_message)
+        
+    # User wants the most recent Thorough Article
+    if f'$thorough' in message_content:
+        
+        send_links = set()
+        
+        # Grabs all hrefs with thorough to it
+        result_links = college_news.searchPublications()
+        
+        # filters out unrelated hrefs
+        links = college_news.send_thorough(result_links)
+        
+        # Removes repeats 
+        links = list(dict.fromkeys(links))
+        
+        # Adds the most recent thorough article
+        send_links.add(links[-2])
+        
+        if len(send_links) != 0:      
+            for link in send_links:
+                await message.channel.send(link)
         else:
             await message.channel.send(no_result_message)
         

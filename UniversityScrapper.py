@@ -40,9 +40,6 @@ class UniversityNews:
 
         links = soup.find_all('link')
         
-        # for link in links:
-        #     print(link.get_text())
-        
         return links
     
     # Send Link to server
@@ -60,6 +57,7 @@ class UniversityNews:
         
         return send_link
     
+    # Send featured links to server
     def send_featured(self, result_links):
     
         send_link = set()
@@ -114,4 +112,31 @@ class UniversityNews:
             ii+=2
         
         return final_links
+
+class CollegeNews:
+    def __init__(self):
+        self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}
+        self.url = 'https://engineering.usask.ca/about/publications.php'
+        
+    def searchPublications(self):
+        response = requests.get(self.url)
+        content = response.content
+        
+        soup = BeautifulSoup(content, 'html.parser')
+        result_links = soup.find_all('a', href=True)
+        
+        return result_links
+    
+    def send_thorough(self, hrefs):
+        
+        send_link = list()
+        
+        for href in hrefs:
+            text = href.text.lower()
+            
+            if "thorough" in text:
+                send_link.append("https://engineering.usask.ca/"+str(href.get('href')))
+                
+        return send_link
+        
         
