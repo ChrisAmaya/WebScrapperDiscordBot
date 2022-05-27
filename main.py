@@ -4,6 +4,7 @@
 # and post in chat periodically and on demand
 
 # ------------------------------------Imports-------------------------------------
+from re import L
 import discord
 import UniversityScrapper
 
@@ -119,8 +120,19 @@ async def on_message(message):
         
     # User wants the articles in the featured section
     if f'$featured' in message_content:
+        
+        # Searched xml file for links (features are treated differently on website)
         result_links = university_news.searchFeatured()
-        # links = university_news.send_link(result_links)
+        
+        # Filters out all non articles
+        links = university_news.send_featured(result_links)
+        
+        if len(links) != 0:
+                for link in links:
+                    await message.channel.send('----------------------')
+                    await message.channel.send(link)
+        else:
+            await message.channel.send(no_result_message)
         
 # ----------------------------------Retrieve Token------------------------------------
 client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")

@@ -33,32 +33,17 @@ class UniversityNews:
     
     # Search on expanded webpage
     def searchFeatured(self):
-        response = requests.get(self.url)
+        response = requests.get('https://news.usask.ca/feeds/featured-articles.xml')
         content = response.content
-        # driver = webdriver.Chrome('C:\Drivers\chromedriver.exe')
-        # driver.get(self.url)
-        # for i in range(10):
-        #     driver.find_element_by_xpath("//button[@class='btn btn-default btn-block more-stories']").click()
-        #     time.sleep(0.5)
-        #     print(i)
         
-        # parse the html and pull the data we want
-        print('\n/////////////////////////////////////////////////////////\n')
-        soup = BeautifulSoup(content, 'html.parser')
+        soup = BeautifulSoup(content, 'xml')
+
+        links = soup.find_all('link')
         
-        # divTag = soup.find_all("div", {"class" : "uofs-article-section"})
-        # for tag in divTag:
-        #     for element in tag.find_all("p"):
-        #         pData = element.text
-        #         print(pData)
+        # for link in links:
+        #     print(link.get_text())
         
-        result_links = soup.find_all("a", class_="uofs-article-section")
-        print(result_links)
-        for i in result_links:
-            print(i)
-            
-        print('\n/////////////////////////////////////////////////////////\n')
-        return result_links
+        return links
     
     # Send Link to server
     def send_link(self, result_links, search_words):
@@ -75,6 +60,19 @@ class UniversityNews:
         
         return send_link
     
+    def send_featured(self, result_links):
+    
+        send_link = set()
+        
+        for link in result_links:
+            hyperlink = link.get_text()
+            
+            # '"/articles" is a key word all featured links have'
+            if "/articles" in hyperlink:
+                send_link.add(hyperlink)
+                
+        return send_link
+                 
     # send one random link 
     def random_link(self, result_links):
         all_links = list()
