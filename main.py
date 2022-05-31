@@ -182,5 +182,7 @@ async def on_message(message):
             await message.channel.send(no_result_message)
         
 # ----------------------------------Retrieve Token------------------------------------
-client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")
+tokenfile = open('supersecrettoken.txt', 'r')
+token = tokenfile.read()
+client.run(str(token))
 
