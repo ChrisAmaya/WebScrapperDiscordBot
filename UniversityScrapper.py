@@ -43,6 +43,17 @@ class UniversityNews:
         
         return links
     
+    # No need to expand the whole webpage for the most recent
+    def searchMostRecent(self):
+        response = requests.get(self.url)
+        content = response.content
+        
+        soup = BeautifulSoup(content, 'html.parser')
+
+        result_links = soup.find_all('a', href=True)
+        
+        return result_links
+    
     # Send Link to server
     def send_link(self, result_links, search_words):
         send_link = set()
@@ -119,6 +130,7 @@ class CollegeNews:
         self.url = 'https://engineering.usask.ca/about/publications.php'
         self.url_website = 'https://engineering.usask.ca/news/engineering-news.php'
     
+    # Search on webpage
     def search(self):
         response = requests.get(self.url_website)
         content = response.content
@@ -129,7 +141,7 @@ class CollegeNews:
         
         return result_links
     
-        # Send Link to server
+    # Send Link to server
     def send_link(self, result_links, search_words):
         send_link = set()
         
@@ -164,6 +176,7 @@ class CollegeNews:
         
         return all_links[randNum]
     
+    # Returns all thorough magazines
     def searchPublications(self):
         response = requests.get(self.url)
         content = response.content
@@ -173,6 +186,7 @@ class CollegeNews:
         
         return result_links
     
+    # Sends most recent thorough magazine
     def send_thorough(self, hrefs):
         
         send_link = list()
@@ -185,7 +199,7 @@ class CollegeNews:
                 
         return send_link
     
-        # Send the most recent links (x3)
+    # Send the most recent links (x3)
     def most_recent(self, result_links):
         all_links = list()
         final_links = set()

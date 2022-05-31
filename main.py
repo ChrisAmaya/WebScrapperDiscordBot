@@ -120,7 +120,7 @@ async def on_message(message):
         print("\n----------------------------------------\n")
         
         # Grab all articles on the University of Saskatchewan News website
-        result_links_university_website = university_news.search()
+        result_links_university_website = university_news.searchMostRecent()
         
         # Grab all articles on the College of Engineering Website
         result_links_college_website = college_news.search()
