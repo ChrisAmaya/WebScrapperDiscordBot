@@ -8,6 +8,7 @@ class UniversityNews:
     def __init__(self):
         self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}
         self.url = 'https://news.usask.ca/index.php'
+        self.url_featured = 'https://news.usask.ca/feeds/featured-articles.xml'
         
     # Create search words part
     def search_words(self, user_message):
@@ -33,7 +34,7 @@ class UniversityNews:
     
     # Search on expanded webpage
     def searchFeatured(self):
-        response = requests.get('https://news.usask.ca/feeds/featured-articles.xml')
+        response = requests.get(self.url_featured)
         content = response.content
         
         soup = BeautifulSoup(content, 'xml')
@@ -74,7 +75,6 @@ class UniversityNews:
     # send one random link 
     def random_link(self, result_links):
         all_links = list()
-        # final_link = set()
         
         # Need to count how many articles total to generate a random number later
         counter = 1
@@ -117,7 +117,53 @@ class CollegeNews:
     def __init__(self):
         self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}
         self.url = 'https://engineering.usask.ca/about/publications.php'
+        self.url_website = 'https://engineering.usask.ca/news/engineering-news.php'
+    
+    def search(self):
+        response = requests.get(self.url_website)
+        content = response.content
         
+        soup = BeautifulSoup(content, 'html.parser')
+
+        result_links = soup.find_all('a', href=True)
+        
+        return result_links
+    
+        # Send Link to server
+    def send_link(self, result_links, search_words):
+        send_link = set()
+        
+        for link in result_links:
+            text = link.text.lower()
+            if search_words in text:
+                # Some links return without the "https://... some with, condition statement to deal with it"
+                if ("http" in str(link)):
+                    send_link.add(str(link.get('href')))
+                else:
+                    send_link.add("https://engineering.usask.ca/news/"+str(link.get('href')))
+        
+        return send_link
+    
+    # send one random link 
+    def random_link(self, result_links):
+        all_links = list()
+        
+        # Need to count how many articles total to generate a random number later
+        counter = 1
+        for i in result_links:
+            if '<a href=' and '/news/' in str(i):
+                counter += 1
+                # Some links return without the "https://... some with, condition statement to deal with it"
+                # if ("http" in str(i)):
+                #     all_links.append(str(i.get('href')))
+                # else:
+                all_links.append("https://engineering.usask.ca/news/"+str(i.get('href')))
+        
+        # Generate random link
+        randNum = random.randint(1,counter)
+        
+        return all_links[randNum]
+    
     def searchPublications(self):
         response = requests.get(self.url)
         content = response.content
@@ -138,5 +184,26 @@ class CollegeNews:
                 send_link.append("https://engineering.usask.ca/"+str(href.get('href')))
                 
         return send_link
+    
+        # Send the most recent links (x3)
+    def most_recent(self, result_links):
+        all_links = list()
+        final_links = set()
+
+        for i in result_links:
+            if '<a href=' and '/news/' in str(i):
+                # Some links return without the "https://... some with, condition statement to deal with it"
+                if ("http" in str(i)):
+                    all_links.append(str(i.get('href')))
+                else:
+                    all_links.append("https://engineering.usask.ca/news/"+str(i.get('href')))
+    
+        # bypass redundant links that come up
+        ii=5
+        while ii < 8:
+            final_links.add(all_links[ii])
+            ii+=1
+        
+        return final_links
         
         

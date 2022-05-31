@@ -14,6 +14,7 @@ college_news = UniversityScrapper.CollegeNews()
 
 # --------------------------------Global Variables--------------------------------
 no_result_message = '''There does not seem to be any results, sorry'''
+article_post_amount = 5
 
 # ---------------------------------Discord Events---------------------------------
 
@@ -35,7 +36,7 @@ async def on_message(message):
     # Convert message to all lowercase for normailzation
     message_content = message.content.lower()  
         
-    # User wants to search for an Article with a key word
+    # User wants to search for an Article with a key word(s)
     if f'$search' in message_content:
         print("\n---------------BOT MESSAGE--------------\n")
         print(f'{client.user} Has received a search request!')
@@ -45,17 +46,26 @@ async def on_message(message):
         search_words = university_news.search_words(message_content)
         
         # Grab all articles on the University of Saskatchewan News website
-        result_links = university_news.search()
+        result_links_university_website = university_news.search()
         
-        # Generate a list of relavent articles with key words
-        links = university_news.send_link(result_links, search_words)
+        # Grab all articles on the College of Engineering Website
+        result_links_college_website = college_news.search()
+        
+        # Generate a list of relavent articles from U of S website with key words
+        links_university_website = university_news.send_link(result_links_university_website, search_words)
+        
+        # Generate a list of relavent articles from College website with key words
+        links_college_website = college_news.send_link(result_links_college_website, search_words)
+        
+        # Concatenate both sets from both websites
+        links = links_university_website.union(links_college_website)
         
         # Send links to where ever the bot was called
         counter = 0
         if len(links) > 0:
             for link in links:
                 # Limits message to avoid spam
-                if (counter >= 5):
+                if (counter >= article_post_amount):
                     break
                 else:
                     await message.channel.send('----------------------')
@@ -77,15 +87,24 @@ async def on_message(message):
         randomArticle = set()
         
         # Grab all articles on the University of Saskatchewan News website
-        result_links = university_news.search()
+        result_links_university_website = university_news.search()
+        
+        # Grab all articles on the College of Engineering Website
+        result_links_college_website = college_news.search()
         
         # Generate a link for a random article
-        link = university_news.random_link(result_links)
+        link_university_website = university_news.random_link(result_links_university_website)
         
-        # Send Article to Discord
-        randomArticle.add(link)
-        if len(randomArticle) == 1:
+        # Generate a random link from the college website
+        link_college_website = college_news.random_link(result_links_college_website)
+        
+        randomArticle.add(link_college_website)
+        randomArticle.add(link_university_website)
+        
+        # Send Articles to Discord
+        if len(randomArticle) == 2:
             for link in randomArticle:
+                await message.channel.send('-----------')
                 await message.channel.send(link)    
         else:
             await message.channel.send(no_result_message)
@@ -94,17 +113,22 @@ async def on_message(message):
         print(f'{client.user} Has finished its random request!')
         print("\n----------------------------------------\n")
             
-    # User wants the most recent articles from the website (top 3)
+    # User wants the most recent articles from the website (top 3) 
     if f'$most recent' in message_content:
         print("\n---------------BOT MESSAGE--------------\n")
         print(f'{client.user} Has received a most recent request!')
         print("\n----------------------------------------\n")
         
         # Grab all articles on the University of Saskatchewan News website
-        result_links = university_news.search()
+        result_links_university_website = university_news.search()
+        
+        # Grab all articles on the College of Engineering Website
+        result_links_college_website = college_news.search()
         
         # Returns the most recent articles from the website 
-        links = university_news.most_recent(result_links)
+        links_university_website = university_news.most_recent(result_links_university_website)
+        links_college_website = college_news.most_recent(result_links_college_website)
+        links = links_university_website.union(links_college_website)
         
         # Send Articles to Discord        
         if (len(links) > 0):
@@ -159,3 +183,4 @@ async def on_message(message):
         
 # ----------------------------------Retrieve Token------------------------------------
 client.run("OTc2OTY4NTgxOTczNjkyNDc2.G9_FY5.b4Rqk3g1NuMs20oJbowRZmerWjrzrDWglBvekA")
+
