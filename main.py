@@ -144,6 +144,10 @@ async def on_message(message):
         
     # User wants the articles in the featured section
     if f'$featured' in message_content:
+        print("\n---------------BOT MESSAGE--------------\n")
+        print(f'{client.user} Has received a feature request!')
+        print("\n----------------------------------------\n")
+        
         
         # Searched xml file for links (features are treated differently on website)
         result_links = university_news.searchFeatured()
@@ -158,8 +162,16 @@ async def on_message(message):
         else:
             await message.channel.send(no_result_message)
         
+        print("\n---------------BOT MESSAGE--------------\n")
+        print(f'{client.user} Has finished its featured request!')
+        print("\n----------------------------------------\n")
+        
+        
     # User wants the most recent Thorough Article
     if f'$thorough' in message_content:
+        print("\n---------------BOT MESSAGE--------------\n")
+        print(f'{client.user} Has received a thorough request!')
+        print("\n----------------------------------------\n")
         
         send_links = set()
         
@@ -180,6 +192,11 @@ async def on_message(message):
                 await message.channel.send(link)
         else:
             await message.channel.send(no_result_message)
+        
+        print("\n---------------BOT MESSAGE--------------\n")
+        print(f'{client.user} Has finished its thorough request!')
+        print("\n----------------------------------------\n")
+        
         
 # ----------------------------------Retrieve Token------------------------------------
 tokenfile = open('supersecrettoken.txt', 'r')
